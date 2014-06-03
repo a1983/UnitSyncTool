@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.manifest
 
 # Compiled Dynamic libraries
 *.so
@@ -19,3 +20,13 @@
 *.exe
 *.out
 *.app
+
+# Debug
+*.pdb
+
+# Qt generated
+*.user
+*.Debug
+*.Release
+Makefile
+moc_*
