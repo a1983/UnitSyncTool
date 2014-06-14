@@ -32,7 +32,7 @@ bool UnitSyncLibApi::LoadLibrary( const QString& libraryFile )
 
 	if( !QFile::exists( libraryFile ) )
 	{
-		qWarning( "UNITSYNC :: Library was not found or is unusable." );
+		qWarning( "UNITSYNC :: Library was not found or is unusable. %s", libraryFile.toStdString().c_str() );
 		return false;
 	}
 	_unitSyncLib->setFileName( libraryFile );

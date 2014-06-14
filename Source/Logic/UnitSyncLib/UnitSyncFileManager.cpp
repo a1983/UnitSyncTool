@@ -6,7 +6,7 @@
 #ifdef WIN32
 const QString _unitSyncFile = "unitsync.dll";
 #else
-#error need linux and macos support
+const QString _unitSyncFile = "libunitsync.so";
 #endif
 const QString _springSettingsFile = "springsettings.cfg";
 
