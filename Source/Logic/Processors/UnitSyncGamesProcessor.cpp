@@ -6,12 +6,14 @@
 
 QByteArray GameChecksumRequest	= "Checksum";
 QByteArray GameSidesRequest		= "Sides";
+QByteArray GameSidesListRequest	= "SidesList";
+QByteArray SideIconRequest		= "Icon";
+QByteArray AIRequest			= "AI";
 QByteArray AIListRequest		= "AI List";
 QByteArray ValidMapsRequest		= "Valid maps";
 QByteArray GameOptionsRequest	= "Options";
 QByteArray GamesOptionsListRequest = "OptionsList";
 
-QByteArray SideIconRequest	= "Icon";
 
 UnitSyncGamesProcessor::UnitSyncGamesProcessor()
 {
@@ -34,7 +36,10 @@ bool UnitSyncGamesProcessor::BuildResponse()
 QByteArray BuildGameMenu( const QByteArray& game ) {
 	QByteArray prefix = "<a href=\"/Games/" + game + "/";
 	QList< QByteArray > items;
-	items << GameChecksumRequest << GameSidesRequest << AIListRequest << ValidMapsRequest
+	items << GameChecksumRequest
+		  << GameSidesRequest	<< GameSidesListRequest
+		  << AIRequest			<< AIListRequest
+		  << ValidMapsRequest
 		  << GameOptionsRequest << GamesOptionsListRequest;
 
 	return ProcessorsTools::BuildMenu( prefix, items );
@@ -61,8 +66,14 @@ bool UnitSyncGamesProcessor::BuildSubResponse( const QByteArray& subRequest, con
 	else if( cmd == GameSidesRequest ) {
 		return ProcessSideRequest( subRequest, cmdList );
 	}
+	else if( cmd == GameSidesListRequest ) {
+		return ProcessSideListRequest( subRequest );
+	}
+	else if( cmd == AIRequest ) {
+		return ProcessAIRequest( subRequest, cmdList );
+	}
 	else if( cmd == AIListRequest ) {
-		return ProcessAIListRequest( subRequest, cmdList );
+		return ProcessAIListRequest( subRequest );
 	}
 	else if( cmd == ValidMapsRequest ) {
 		return ProcessValidMapsRequest( subRequest );
@@ -79,7 +90,7 @@ bool UnitSyncGamesProcessor::BuildSubResponse( const QByteArray& subRequest, con
 	return true;
 }
 
-QByteArray BuildSideList( const QByteArray& game ) {
+QByteArray BuildSideHtmlList( const QByteArray& game ) {
 	QByteArray prefix = "<a href=\"/Games/" + game + "/" + GameSidesRequest +"/";
 
 	QList< SideInfo > sides = UnitSync()->GetGameSides( game );
@@ -122,7 +133,7 @@ QByteArray BuildSideIcon( const QByteArray& game, const QByteArray& side ) {
 bool UnitSyncGamesProcessor::ProcessSideRequest( const QByteArray& game, const QList<QByteArray>& subRequest )
 {
 	if( subRequest.size() == 2 ) {
-		SetResponse( BuildSideList( game ), Response_Html );
+		SetResponse( BuildSideHtmlList( game ), Response_Html );
 		return true;
 	}
 	else if( subRequest.size() == 3 ) {
@@ -135,6 +146,18 @@ bool UnitSyncGamesProcessor::ProcessSideRequest( const QByteArray& game, const Q
 	}
 
 	SetResponse( "Wrong game side request", Response_Html );
+	return true;
+}
+
+bool UnitSyncGamesProcessor::ProcessSideListRequest( const QByteArray& game )
+{
+	QList< SideInfo > sides = UnitSync()->GetGameSides( game );
+	QByteArray response;
+	for( int i = 0; i < sides.size(); ++i ) {
+		const SideInfo& side = sides[ i ];
+		response.append( side.Name.toUtf8() ).append( '\n' );
+	}
+	SetResponse( response, Response_PlainText );
 	return true;
 }
 
@@ -151,7 +174,7 @@ QByteArray BuildAIListList( const QByteArray& game ) {
 	return ProcessorsTools::BuildMenu( prefix, items );
 }
 
-QByteArray BuildAiInfo( const QByteArray& game, const QByteArray& ai ) {
+QByteArray BuildAIInfo( const QByteArray& game, const QByteArray& ai ) {
 	QByteArray result;
 
 	QList< SkirmishAiInfo > items = UnitSync()->GetGameAIList( game );
@@ -168,27 +191,39 @@ QByteArray BuildAiInfo( const QByteArray& game, const QByteArray& ai ) {
 
 	const SkirmishAiInfo& info = items[ index ];
 	result
-			.append( info.ShortName.toUtf8() )	.append( "<br>" )
-			.append( info.Name.toUtf8() )		.append( "<br>" )
-			.append( info.Description.toUtf8() ).append( "<br>" )
-			.append( info.URL.toUtf8() )		.append( "<br>" )
-			.append( info.Version.toUtf8() )	.append( "<br>" );
+			.append( info.ShortName.toUtf8() )	.append( '\n' )
+			.append( info.Name.toUtf8() )		.append( '\n' )
+			.append( info.Description.toUtf8() ).append( '\n' )
+			.append( info.URL.toUtf8() )		.append( '\n' )
+			.append( info.Version.toUtf8() )	.append( '\n' );
 
 	return result;
 }
 
-bool UnitSyncGamesProcessor::ProcessAIListRequest( const QByteArray& game, const QList<QByteArray>& subRequest )
+bool UnitSyncGamesProcessor::ProcessAIRequest( const QByteArray& game, const QList<QByteArray>& subRequest )
 {
 	if( subRequest.size() == 2 ) {
 		SetResponse( BuildAIListList( game ), Response_Html );
 		return true;
 	}
 	else if( subRequest.size() == 3 ) {
-		SetResponse( BuildAiInfo( game, subRequest[ 2 ] ), Response_Html );
+		SetResponse( BuildAIInfo( game, subRequest[ 2 ] ), Response_PlainText );
 		return true;
 	}
 
 	SetResponse( "Wrong game AI list request", Response_Html );
+	return true;
+}
+
+bool UnitSyncGamesProcessor::ProcessAIListRequest( const QByteArray& game )
+{
+	QList< SkirmishAiInfo > aiList = UnitSync()->GetGameAIList( game );
+	QByteArray response;
+	for( int i = 0; i < aiList.size(); ++i ) {
+		const SkirmishAiInfo& ai = aiList[ i ];
+		response.append( ai.ShortName.toUtf8() );
+	}
+	SetResponse( response, Response_PlainText );
 	return true;
 }
 

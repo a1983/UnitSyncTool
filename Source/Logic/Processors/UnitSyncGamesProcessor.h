@@ -15,7 +15,9 @@ private:
 
 private:
 	bool ProcessSideRequest			( const QByteArray& game, const QList< QByteArray >& subRequest );
-	bool ProcessAIListRequest		( const QByteArray& game, const QList< QByteArray >& subRequest );
+	bool ProcessSideListRequest		( const QByteArray& game );
+	bool ProcessAIRequest			( const QByteArray& game, const QList< QByteArray >& subRequest );
+	bool ProcessAIListRequest		( const QByteArray& game );
 	bool ProcessValidMapsRequest	( const QByteArray& game );
 	bool ProcessOptionsRequest		( const QByteArray& game, const QList< QByteArray >& subRequest );
 };
