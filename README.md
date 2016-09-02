@@ -17,17 +17,17 @@ Run with command line arguments:
 1. --unitsyncDir="/engine/dir" path to unit sync library.
 Spring paths get by unitsync default paths.
 
-2. --springDataDir="/data/dir" path to spring data directory. It's supposed next directory structure
-	SpringData
-	|-engines
-	|	|-91.0
-	|	|-94.1
-	|	|-...
-	|-games
-	|-maps
-	|-rapid
-	|-springsettings.cfg
-	
+2. --springDataDir="/data/dir" path to spring data directory. It's supposed next directory structure  
+	SpringData  
+	|engines  
+	|   |91.0  
+	|   |94.1  
+	|   |...  
+	|games  
+	|maps  
+	|rapid  
+	|springsettings.cfg  
+	  
 	when tool load unitsync from one of engines path, it's setup using springsettings.cfg from
 	spring data directory, and also setup data directory in springsettings.cfg
 	( by set SpringData option )
