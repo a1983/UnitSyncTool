@@ -2,7 +2,7 @@ UnitSyncTool
 ============
 
 Spring Engine Data Provider - tool is using data from Spring Engine and provides it as local http server.
-Data is taken from unitsync library with api: https://raw.githubusercontent.com/spring/spring/develop/tools/unitsync/unitsync_api.h
+Data is taken from unitsync library: https://raw.githubusercontent.com/spring/spring/develop/tools/unitsync/unitsync_api.h
 
 Compile:
 
